@@ -15,12 +15,16 @@
   :license "Artistic"
   :description "A library to enable simple message pipelines."
   :serial T
-  :components ((:file "package.lisp")
-               (:file "documentation.lisp")
-               (:file "segment.lisp")
-               (:file "pipe.lisp")
-               (:file "source.lisp")
-               (:file "valve.lisp")
-               (:file "faucet.lisp"))
+  :components ((:file "package")
+               (:file "segment")
+               (:file "pipe")
+               (:file "source")
+               (:file "valve")
+               (:file "faucet"))
   :depends-on (:local-time
                :bordeaux-threads))
+
+(defsystem piping-doc
+  :name "Piping Doc"
+  :components ((:file "documentation"))
+  :depends-on (:piping :lquery-doc))
