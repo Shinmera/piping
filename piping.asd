@@ -20,7 +20,11 @@
                (:file "pipe")
                (:file "source")
                (:file "valve")
-               (:file "faucet"))
+               (:file "faucet")
+               (:file "splitter")
+               (:file "switch")
+               (:file "filter")
+               (:file "mixer"))
   :depends-on (:local-time
                :bordeaux-threads))
 

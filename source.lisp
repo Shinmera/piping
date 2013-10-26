@@ -19,3 +19,6 @@
 
 (defmethod connect-prev ((source source) (segment segment))
   (error "Cannot connect a previous element to a source."))
+
+(defmethod disconnect-prev ((source source))
+  (error "Cannot disconnect a previous element from a source."))

@@ -32,3 +32,14 @@
 
 (defmethod close-valve ((valve valve) &optional (status NIL))
   (setf (opened valve) status))
+
+(defclass active-valve (valve)
+  ((open-func :initarg :open-func :initform (constantly NIL) :accessor open-func)
+   (close-func :initarg :close-func :initform (constantly NIL) :accessor close-func)) 
+  (:documentation "An active valve that closes or opens depending on specific messages."))
+
+(defmethod pass :before ((valve active-valve) message)
+  (if (funcall (open-func valve) message)
+      (open-valve valve))
+  (if (funcall (close-func valve) message)
+      (close-valve valve)))

@@ -12,6 +12,12 @@
 (defgeneric connect-prev (pipe segment)
   (:documentation "Connect the pipe's previous with the given segment."))
 
+(defgeneric disconnect-prev (pipe)
+  (:documentation "Disconnect the previous segment."))
+
+(defgeneric disconnect-next (pipe)
+  (:documentation "Disconnect the next segment."))
+
 (defgeneric print-flow (pipe stream)
   (:documentation "Print this and all following pipes as a flow diagram."))
 
@@ -37,6 +43,8 @@
   (setf (next pipe) segment))
 
 (defmethod connect-next ((pipe pipe) (pipe-2 pipe))
+  (if (next pipe)
+      (setf (next (prev pipe)) NIL))
   (setf (next pipe) pipe-2)
   (setf (prev pipe-2) pipe))
 
@@ -44,8 +52,20 @@
   (setf (prev pipe) segment))
 
 (defmethod connect-prev ((pipe pipe) (pipe-2 pipe))
+  (if (prev pipe)
+      (setf (next (prev pipe)) NIL))
   (setf (prev pipe) pipe-2)
   (setf (next pipe-2) pipe))
+
+(defmethod disconnect-next ((pipe pipe))
+  (if (subtypep (type-of (next pipe)) 'pipe)
+      (setf (prev (next pipe)) NIL))
+  (setf (next pipe) NIL))
+
+(defmethod disconnect-prev ((pipe pipe))
+  (if (subtypep (type-of (prev pipe)) 'pipe)
+      (setf (next (prev pipe)) NIL))
+  (setf (prev pipe) NIL))
 
 (defmethod pass ((pipe pipe) message)
   (pass (next pipe) message))

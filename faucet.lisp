@@ -20,9 +20,25 @@
 (defmethod connect-next ((faucet faucet) (segment segment))
   (error "Cannot connect a next element to a faucet."))
 
+(defmethod disconnect-next ((faucet faucet))
+  (error "Cannot disconnect a next element from a faucet."))
 
-(defclass print-faucet (faucet) ()
-  (:documentation "A faucet that simply prints all the messages."))
+(defclass string-stream-faucet (faucet)
+  ((stream :initarg :stream :initform (error "Stream required!") :accessor faucet-stream))
+  (:documentation "A faucet that prints everything to a string stream."))
 
-(defmethod pass ((faucet print-faucet) message)
-  (print message))
+(defmethod pass ((faucet stream-faucet) message)
+  (format (faucet-stream faucet) "~a" message))
+
+(defclass print-faucet (string-stream-faucet)
+  ((stream :initform *standard-output*))
+  (:documentation "A faucet that simply prints all the messages to stdout"))
+
+(defclass file-faucet (string-stream-faucet)
+  ((file :initarg :file :initform (error "Filepath required!") :accessor file)
+   (stream :initform NIL :accessor faucet-stream))
+  (:documentation "A faucet that prints everything to file."))
+
+(defmethod initialize-instance ((faucet file-faucet) &rest rest)
+  (declare (ignore rest))
+  (setf (faucet-stream faucet) (open (file faucet))))
