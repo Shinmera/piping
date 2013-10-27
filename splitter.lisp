@@ -15,7 +15,7 @@
   (format stream "[<~a ~:[~;~:*~a~]]" (length (targets splitter)) (name splitter) stream))
 
 (defmethod print-object ((splitter splitter) stream)
-  (print-self (prev splitter) stream)
+  (if (prev splitter) (print-self (prev splitter) stream))
   (print-self splitter stream)
   (format stream "((~{~a~^,  ~}))" (targets splitter)))
 

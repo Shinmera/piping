@@ -44,7 +44,7 @@
 
 (defmethod connect-next ((pipe pipe) (pipe-2 pipe))
   (if (next pipe)
-      (setf (next (prev pipe)) NIL))
+      (setf (prev (next pipe)) NIL))
   (setf (next pipe) pipe-2)
   (setf (prev pipe-2) pipe))
 

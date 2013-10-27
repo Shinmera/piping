@@ -12,7 +12,7 @@
 
 (defmethod print-object ((source source) stream)
   (print-self source stream)
-  (print-self (next source) stream))
+  (if (next source) (print-self (next source) stream)))
 
 (defmethod print-self ((source source) stream)
   (format stream "|~:[~;~:*~a~]>>" (name source)))

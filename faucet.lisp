@@ -14,7 +14,7 @@
   (format stream ">>~:[~;~:*~a~]|" (name faucet)))
 
 (defmethod print-object ((faucet faucet) stream)
-  (print-self (prev faucet) stream)
+  (if (prev faucet) (print-self (prev faucet) stream))
   (print-self faucet stream))
 
 (defmethod connect-next ((faucet faucet) (segment segment))
@@ -27,7 +27,7 @@
   ((stream :initarg :stream :initform (error "Stream required!") :accessor faucet-stream))
   (:documentation "A faucet that prints everything to a string stream."))
 
-(defmethod pass ((faucet stream-faucet) message)
+(defmethod pass ((faucet string-stream-faucet) message)
   (format (faucet-stream faucet) "~a" message))
 
 (defclass print-faucet (string-stream-faucet)
