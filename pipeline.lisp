@@ -37,8 +37,21 @@
     (%consider next table)))
 
 (defmacro build-pipeline (source &rest pipes)
-  (flet ((build (pipes)
-           (when pipes
-             )))
-    (connect-next source (build pipes))
-    (make-instance 'pipeline :source source)))
+  (labels ((fun (pipes)
+             (when pipes
+               (let ((type (car pipes))
+                     (args NIL))
+                 (when (listp type)
+                   (if (stringp (second type))
+                       (setf args (append `(:name ,(cdr type)) (cddr type)))
+                       (setf args (cdr type)))
+                   (setf type (car type)))
+                 `(make-instance ',type ,@args :next ,(fun (cdr pipes)))))))
+    `(progn (connect-next ,source ,(fun pipes))
+            (make-instance 'pipeline :source ,source))))
+
+(defmethod print-flow ((pipeline pipeline) stream)
+  (print-flow (source pipeline) stream))
+
+(defmethod pass ((pipeline pipeline) message)
+  (pass (source pipeline) message))
