@@ -23,9 +23,19 @@
            :connect-prev
            :disconnect-next
            :disconnect-prev
+           :insert-before
+           :insert-after
+           :remove-before
+           :remove-after
+           :remove-this
+           :replace-this
            :print-flow
            :next
            :prev
+           
+           :pipeline
+           :pipes
+           :build-pipeline
 
            :segment
            :pass
