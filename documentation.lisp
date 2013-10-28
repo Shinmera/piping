@@ -18,4 +18,4 @@
   (write-documentation :piping
                        (merge-pathnames "about-template.html" (asdf:system-source-directory :piping))
                        :output-file (merge-pathnames "about.html" (asdf:system-source-directory :piping))
-                       :exclude '(:internal)))
+                       :exclude '(:internal :method)))

@@ -36,6 +36,8 @@
            :pipeline
            :pipes
            :build-pipeline
+           :add-pipe
+           :get-pipe
 
            :segment
            :pass

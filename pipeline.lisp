@@ -24,6 +24,8 @@
 
 (defgeneric %consider (pipe table))
 
+(defmethod %consider (pipe table))
+
 (defmethod %consider ((pipe pipe) table)
   (%enter pipe table)
   (%consider (next pipe) table))
@@ -55,3 +57,15 @@
 
 (defmethod pass ((pipeline pipeline) message)
   (pass (source pipeline) message))
+
+(defmethod add-pipe ((pipeline pipeline) class-or-instance &rest args)
+  (let ((instance (etypecase class-or-instance
+                    (symbol (apply #'make-instance class-or-instance args))
+                    (pipe class-or-instance))))
+    (if (name instance)
+        (setf (gethash (name instance) (pipes pipeline))
+              (name instance)))
+    instance))
+
+(defmethod get-pipe ((pipeline pipeline) name)
+  (gethash (pipes pipeline) name))
