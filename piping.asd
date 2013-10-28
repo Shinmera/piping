@@ -24,7 +24,8 @@
                (:file "splitter")
                (:file "switch")
                (:file "filter")
-               (:file "mixer"))
+               (:file "mixer")
+               (:file "pipeline"))
   :depends-on (:local-time
                :bordeaux-threads))
 
