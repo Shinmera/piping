@@ -38,7 +38,7 @@
   (dolist (next (targets pipe))
     (%consider next table)))
 
-(defmacro build-pipeline (source &rest pipes)
+(defmacro build-pipeline (source &body pipes)
   (labels ((fun (pipes)
              (when pipes
                (let ((type (car pipes))
@@ -49,8 +49,7 @@
                        (setf args (cdr type)))
                    (setf type (car type)))
                  `(make-instance ',type ,@args :next ,(fun (cdr pipes)))))))
-    `(progn (connect-next ,source ,(fun pipes))
-            (make-instance 'pipeline :source ,source))))
+    `(connect-next ,source ,(fun pipes))))
 
 (defmethod print-flow ((pipeline pipeline) stream)
   (print-flow (source pipeline) stream))
@@ -68,4 +67,4 @@
     instance))
 
 (defmethod get-pipe ((pipeline pipeline) name)
-  (gethash (pipes pipeline) name))
+  (gethash name (pipes pipeline)))

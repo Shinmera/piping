@@ -17,7 +17,15 @@
 (defmethod print-object ((splitter splitter) stream)
   (if (prev splitter) (print-self (prev splitter) stream))
   (print-self splitter stream)
-  (format stream "((~{~a~^,  ~}))" (targets splitter)))
+  (format stream "~:[~;~:*((~{~a~^,  ~}))~]" (targets splitter)))
+
+(defun %splitter-print-flow (stream arg &rest rest)
+  (declare (ignore rest))
+  (print-flow arg stream))
+
+(defmethod print-flow ((splitter splitter) stream)
+  (print-self splitter stream)
+  (format stream "((~{~/piping::%splitter-print-flow/~^,  ~}))" (targets splitter)))
 
 (defmethod connect-next ((splitter splitter) (segment segment))
   (error "Splitters cannot be connected to a single next element."))
