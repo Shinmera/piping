@@ -42,6 +42,7 @@
            :segment
            :pass
            :print-self
+           :name
 
            :source
 
