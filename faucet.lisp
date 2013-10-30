@@ -28,7 +28,8 @@
   (:documentation "A faucet that prints everything to a string stream."))
 
 (defmethod pass ((faucet string-stream-faucet) message)
-  (format (faucet-stream faucet) "~a" message))
+  (format (faucet-stream faucet) "~a" message)
+  (finish-output (faucet-stream faucet)))
 
 (defclass print-faucet (string-stream-faucet)
   ((stream :initform *standard-output*))
