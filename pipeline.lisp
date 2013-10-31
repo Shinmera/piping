@@ -63,7 +63,7 @@
                     (pipe class-or-instance))))
     (if (name instance)
         (setf (gethash (name instance) (pipes pipeline))
-              (name instance)))
+              instance))
     instance))
 
 (defmethod get-pipe ((pipeline pipeline) name)
