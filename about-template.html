@@ -19,13 +19,13 @@
   <body>
     <header>
       <img src="http://shinmera.tymoon.eu/public/piping-logo.png" alt="Piping"/>
-      <h1>v0.0.1</h1>
+      <h1>v0.9.1</h1>
     </header>
     <div id="content">
       <article>
         <header><h2>What is Piping?</h2></header>
         <p>
-          
+          Piping is a simple library for Common Lisp to construct message-passing systems in a form similar to pipelines.
         </p>
       </article>
       <article>
@@ -35,6 +35,24 @@
         </p>
         <code>(ql:quickload :piping)</code>
         <p>
+          Create a new pipeline:
+        </p>
+        <pre><code>(setf pipeline 
+      (make-instance 'pipeline
+                     :source (build-pipeline (make-instance 'source) 
+                               (valve :name "MAIN-VALVE")
+                               (print-faucet :name "PRINTER"))))</code></pre>
+        <p>
+          Pass a message along it:
+        </p>
+        <code>(pass pipeline "Hello Plumbers!")</code>
+        <p>
+          Print the pipeline, retrieve a segment and change it:
+        </p>
+        <code>(print-flow pipeline *standard-output*)</code><br />
+        <code>(close-valve (get-pipe pipeline "MAIN-VALVE"))</code>
+        <p>
+          Pipe systems are still a bit complicated to build and handle. I'm intending on reworking this in the future to make it simple to build and manipulate on the fly.
         </p>
       </article>
       <article>

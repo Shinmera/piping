@@ -1,0 +1,693 @@
+<!DOCTYPE html><!--
+  This file is a part of Piping
+  (c) 2013 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
+  Author: Nicolas Hafner <shinmera@tymoon.eu>
+  !--><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Piping - About</title>
+    <style type="text/css">
+      code{font-family: Consolas, Inconsolata, monospace;}
+      h3{display: inline-block;margin:0;padding:0;}
+      #docs{list-style: none;}
+      #docs li{margin-bottom: 20px;}
+      #docs pre{margin: 0 0 0 10px; white-space: pre-wrap;}
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="http://shinmera.tymoon.eu/public/piping-logo.png" alt="Piping"/>
+      <h1>v0.9.1</h1>
+    </header>
+    <div id="content">
+      <article>
+        <header><h2>What is Piping?</h2></header>
+        <p>
+          Piping is a simple library for Common Lisp to construct message-passing systems in a form similar to pipelines.
+        </p>
+      </article>
+      <article>
+        <header><h2>How To</h2></header>
+        <p>
+          Load Piping with ASDF or Quicklisp.
+        </p>
+        <code>(ql:quickload :piping)</code>
+        <p>
+          Create a new pipeline:
+        </p>
+        <pre><code>(setf pipeline 
+      (make-instance 'pipeline
+                     :source (build-pipeline (make-instance 'source) 
+                               (valve :name "MAIN-VALVE")
+                               (print-faucet :name "PRINTER"))))</code></pre>
+        <p>
+          Pass a message along it:
+        </p>
+        <code>(pass pipeline "Hello Plumbers!")</code>
+        <p>
+          Print the pipeline, retrieve a segment and change it:
+        </p>
+        <code>(print-flow pipeline *standard-output*)</code><br/>
+        <code>(close-valve (get-pipe pipeline "MAIN-VALVE"))</code>
+        <p>
+          Pipe systems are still a bit complicated to build and handle. I'm intending on reworking this in the future to make it simple to build and manipulate on the fly.
+        </p>
+      </article>
+      <article>
+        <header><h2>Other Guff</h2></header>
+        <p>
+          Piping is a sub-project of TyNETv5 ("Radiance"), licensed under the <a href="http://opensource.org/licenses/Artistic-2.0">Artistic License 2.0</a> and ©2013 TymoonNET/NexT, <a href="http://shinmera.com">Nicolas Hafner</a>.<br/>
+          This program can be obtained via git on <a href="git://git.tymoon.eu/piping.git">git://git.tymoon.eu/piping.git</a>. For questions, patches or suggestions, please contact me via <a href="mailto:shinmera@tymoon.eu">email</a>.
+        </p>
+      </article>
+      <article>
+        <header><h2>Package Function Index</h2></header>
+        <ul id="docs"><li id="template">
+            <a class="anchor" name="ACTIVE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">ACTIVE</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="ACTIVE-SWITCH"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">ACTIVE-SWITCH</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">A switch that can actively change its target pipe depending on the message.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="ACTIVE-VALVE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">ACTIVE-VALVE</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">An active valve that closes or opens depending on specific messages.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="ADD-PIPE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">ADD-PIPE</h3>
+                  <span class="funcargs">(PIPELINE CLASS-OR-INSTANCE &amp;REST ARGS)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="BUILD-PIPELINE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL MACRO</span>
+                <code>
+                  <h3 class="funcname">BUILD-PIPELINE</h3>
+                  <span class="funcargs">(SOURCE &amp;BODY PIPES)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="CLOSE-FUNC"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">CLOSE-FUNC</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="CLOSE-VALVE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">CLOSE-VALVE</h3>
+                  <span class="funcargs">(VALVE &amp;OPTIONAL (STATUS))</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="CONNECT-NEW"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">CONNECT-NEW</h3>
+                  <span class="funcargs">(SPLITTER SEGMENT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Connect a new element to the splitter.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="CONNECT-NEXT"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">CONNECT-NEXT</h3>
+                  <span class="funcargs">(PIPE SEGMENT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Connect the pipe's next with the given segment.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="CONNECT-PREV"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">CONNECT-PREV</h3>
+                  <span class="funcargs">(PIPE SEGMENT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Connect the pipe's previous with the given segment.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="DISCONNECT"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">DISCONNECT</h3>
+                  <span class="funcargs">(SPLITTER SEGMENT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Disconnect an existing element from the splitter.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="DISCONNECT-NEXT"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">DISCONNECT-NEXT</h3>
+                  <span class="funcargs">(PIPE)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Disconnect the next segment.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="DISCONNECT-PREV"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">DISCONNECT-PREV</h3>
+                  <span class="funcargs">(PIPE)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Disconnect the previous segment.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="FAUCET"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">FAUCET</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">An endpoint for pipe messages to arrive at.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="FILE-FAUCET"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">FILE-FAUCET</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">A faucet that prints everything to file.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="FILTER"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">FILTER</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">Pipe segment that filters messages according to a test function.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="GET-PIPE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">GET-PIPE</h3>
+                  <span class="funcargs">(PIPELINE NAME)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="INSERT-AFTER"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">INSERT-AFTER</h3>
+                  <span class="funcargs">(PIPE PIPE-TO-INSERT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Insert a new pipe element in between this and the one after.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="INSERT-BEFORE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">INSERT-BEFORE</h3>
+                  <span class="funcargs">(PIPE PIPE-TO-INSERT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Insert a new pipe element in between this and the one before.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="MAKE-ACTIVE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">MAKE-ACTIVE</h3>
+                  <span class="funcargs">(SWITCH SEGMENT-OR-INDEX &amp;KEY (TEST #'EQL))</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Makes the given segment or index active.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="MESSAGE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">MESSAGE</h3>
+                  <span class="funcargs">(CONDITION)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="MIX"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">MIX</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="MIXER"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">MIXER</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">A pipe segment that actively changes components of the message.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="NAME"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">NAME</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="NEXT"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">NEXT</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="ON-CLOSED"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">ON-CLOSED</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="OPEN-FUNC"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">OPEN-FUNC</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="OPEN-VALVE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">OPEN-VALVE</h3>
+                  <span class="funcargs">(VALVE &amp;OPTIONAL (STATUS))</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="OPENED"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">OPENED</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="PASS"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">PASS</h3>
+                  <span class="funcargs">(SEGMENT MESSAGE)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Pass a message through the segment.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="PIPE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">PIPE</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">Base pipe class.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="PIPELINE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">PIPELINE</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">A class to hold easy access to pipe segments and the pipe system as a whole.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="PIPES"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">PIPES</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="PREV"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">PREV</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="PRINT-FAUCET"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">PRINT-FAUCET</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">A faucet that simply prints all the messages to stdout</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="PRINT-FLOW"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">PRINT-FLOW</h3>
+                  <span class="funcargs">(PIPE STREAM)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Print this and all following pipes as a flow diagram.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="PRINT-SELF"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">PRINT-SELF</h3>
+                  <span class="funcargs">(SEGEMENT STREAM)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Print a representation of itself without connecting segments.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="REMOVE-AFTER"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">REMOVE-AFTER</h3>
+                  <span class="funcargs">(PIPE)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Pop out the element after this one and return it. Tries to retain the pipeline.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="REMOVE-BEFORE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">REMOVE-BEFORE</h3>
+                  <span class="funcargs">(PIPE)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Pop out the element before this one and return it. Tries to retain the pipeline.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="REMOVE-THIS"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">REMOVE-THIS</h3>
+                  <span class="funcargs">(PIPE)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Pop out this pipe element and return it. Tries to retain the pipeline.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="REPLACE-THIS"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">REPLACE-THIS</h3>
+                  <span class="funcargs">(PIPE PIPE-TO-INSERT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc">Replace this pipe element with the given one and return the old one.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="SEGMENT"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">SEGMENT</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">Base segment class.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="SOURCE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">SOURCE</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">A source for the pipe system that feeds messages down the pipeline.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="SOURCE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">SOURCE</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="SPLITTER"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">SPLITTER</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">Splits the messages up and passes them to multiple targets.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="STRING-STREAM-FAUCET"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">STRING-STREAM-FAUCET</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">A faucet that prints everything to a string stream.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="SWITCH"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">SWITCH</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">A switch connects to multiple pipes but only passes to one.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="TARGETS"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">TARGETS</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="TEST"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">TEST</h3>
+                  <span class="funcargs">(SB-PCL::OBJECT)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="VALVE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">VALVE</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">Valves allow you to regulate the passing process.</pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="VALVE"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL GENERIC</span>
+                <code>
+                  <h3 class="funcname">VALVE</h3>
+                  <span class="funcargs">(CONDITION)</span>
+                </code>
+              </header>
+              <pre class="funcdesc"></pre>
+            </article>
+          </li><li id="template">
+            <a class="anchor" name="VALVE-CLOSED"/>
+            <article>
+              <header>
+                <span class="functype">EXTERNAL CLASS</span>
+                <code>
+                  <h3 class="funcname">VALVE-CLOSED</h3>
+                  <span class="funcargs"></span>
+                </code>
+              </header>
+              <pre class="funcdesc">Condition signalled when a message arrives at a closed valve.</pre>
+            </article>
+          </li></ul>
+      </article>
+    </div>
+  </body>
+</html>
