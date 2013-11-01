@@ -10,7 +10,7 @@
 
 (defsystem piping
   :name "Piping"
-  :version "0.0.1"
+  :version "0.9.1"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :license "Artistic"
   :description "A library to enable simple message pipelines."
