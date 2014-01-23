@@ -11,7 +11,8 @@
   (:documentation "A pipe segment that actively changes components of the message."))
 
 (defmethod print-self ((mixer mixer) stream)
-  (format stream "[** ~:[~;~:*~a~]]" (name mixer)))
+  (format stream "[** ~:[~;~:*~a~]]" (name mixer))
+  mixer)
 
 (defmethod pass ((mixer mixer) message)
   (pass (next mixer) (funcall (mix mixer) message)))

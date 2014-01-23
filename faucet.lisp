@@ -11,7 +11,8 @@
   (:documentation "An endpoint for pipe messages to arrive at."))
 
 (defmethod print-self ((faucet faucet) stream)
-  (format stream ">>~:[~;~:*~a~]|" (name faucet)))
+  (format stream ">>~:[~;~:*~a~]|" (name faucet))
+  faucet)
 
 (defmethod print-object ((faucet faucet) stream)
   (if (prev faucet) (print-self (prev faucet) stream))

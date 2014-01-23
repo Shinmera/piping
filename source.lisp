@@ -12,10 +12,12 @@
 
 (defmethod print-object ((source source) stream)
   (print-self source stream)
-  (if (next source) (print-self (next source) stream)))
+  (if (next source) (print-self (next source) stream))
+  source)
 
 (defmethod print-self ((source source) stream)
-  (format stream "|~:[~;~:*~a~]>>" (name source)))
+  (format stream "|~:[~;~:*~a~]>>" (name source))
+  source)
 
 (defmethod connect-prev ((source source) (segment segment))
   (error "Cannot connect a previous element to a source."))

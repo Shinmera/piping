@@ -11,7 +11,8 @@
   (:documentation "A switch connects to multiple pipes but only passes to one."))
 
 (defmethod print-self ((switch switch) stream)
-  (format stream "[<\\~a~:[~;~:* ~a~]]" (length (targets switch)) (name switch)))
+  (format stream "[<\\~a~:[~;~:* ~a~]]" (length (targets switch)) (name switch))
+  switch)
 
 (defgeneric make-active (switch segment-or-index &key)
   (:documentation "Makes the given segment or index active."))

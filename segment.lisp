@@ -17,10 +17,12 @@
   (:documentation "Pass a message through the segment."))
 
 (defmethod print-object ((segment segment) stream)
-  (print-self segment stream))
+  (print-self segment stream)
+  segment)
 
 (defmethod print-self ((segment segment) stream)
-  (format stream "|~:[   ~;~a~]|" (name segment)))
+  (format stream "|~:[   ~;~a~]|" (name segment))
+  segment)
 
 (defmethod pass ((segment segment) message)
   NIL)

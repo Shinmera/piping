@@ -11,7 +11,8 @@
   (:documentation "Pipe segment that filters messages according to a test function."))
 
 (defmethod print-self ((filter filter) stream)
-  (format stream "[:: ~:[~;~:*~a~]]" (name filter)))
+  (format stream "[:: ~:[~;~:*~a~]]" (name filter))
+  filter)
 
 (defmethod pass ((filter filter) message)
   (if (funcall (test filter) message)

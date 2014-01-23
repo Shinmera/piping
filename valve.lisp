@@ -17,7 +17,8 @@
   (:documentation "Valves allow you to regulate the passing process."))
 
 (defmethod print-self ((valve valve) stream)
-  (format stream "[~:[|~;-~] ~:[ ~;~:*~a~]]" (opened valve) (name valve)))
+  (format stream "[~:[|~;-~] ~:[ ~;~:*~a~]]" (opened valve) (name valve))
+  valve)
 
 (defmethod pass ((valve valve) message)
   (if (opened valve)

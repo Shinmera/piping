@@ -47,10 +47,12 @@
 (defmethod print-object ((pipe pipe) stream)
   (if (prev pipe) (print-self (prev pipe) stream))
   (print-self pipe stream)
-  (if (next pipe) (print-self (next pipe) stream)))
+  (if (next pipe) (print-self (next pipe) stream))
+  pipe)
 
 (defmethod print-self ((pipe pipe) stream)
-  (format stream "[~:[   ~;~:*~a~]]" (name pipe)))
+  (format stream "[~:[   ~;~:*~a~]]" (name pipe))
+  pipe)
 
 (defmethod initialize-instance :after ((pipe pipe) &rest rest)
   (declare (ignore rest))

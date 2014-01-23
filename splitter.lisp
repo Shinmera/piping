@@ -12,12 +12,14 @@
   (:documentation "Splits the messages up and passes them to multiple targets."))
 
 (defmethod print-self ((splitter splitter) stream)
-  (format stream "[<~a ~:[~;~:*~a~]]" (length (targets splitter)) (name splitter) stream))
+  (format stream "[<~a ~:[~;~:*~a~]]" (length (targets splitter)) (name splitter) stream)
+  splitter)
 
 (defmethod print-object ((splitter splitter) stream)
   (if (prev splitter) (print-self (prev splitter) stream))
   (print-self splitter stream)
-  (format stream "~:[~;~:*((~{~a~^,  ~}))~]" (targets splitter)))
+  (format stream "~:[~;~:*((~{~a~^,  ~}))~]" (targets splitter))
+  splitter)
 
 (defun %splitter-print-flow (stream arg &rest rest)
   (declare (ignore rest))
