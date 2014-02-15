@@ -37,6 +37,7 @@
            :pipes
            :build-pipeline
            :add-pipe
+           :remove-pipe
            :get-pipe
 
            :segment

@@ -66,5 +66,13 @@
               instance))
     instance))
 
+(defmethod remove-pipe ((pipeline pipeline) instance-or-name)
+  (let ((instance (if (stringp instance-or-name)
+                      (gethash instance-or-name (pipes pipeline))
+                      instance-or-name)))
+    (when (and instance (name instance))
+      (remhash (name instance) (pipes pipeline))
+      instance)))
+
 (defmethod get-pipe ((pipeline pipeline) name)
   (gethash name (pipes pipeline)))
