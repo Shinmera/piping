@@ -1,78 +1,74 @@
-#|
-  This file is a part of Piping
-  (c) 2013 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
-  Author: Nicolas Hafner <shinmera@tymoon.eu>
+#| 
+ This file is a part of Piping
+ (c) 2014 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
+ Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(in-package :piping)
+(in-package #:org.tymoonnext.piping)
+
+(defun make-splitter ()
+  (make-array 1 :adjustable T :fill-pointer 0))
 
 (defclass pipeline ()
-  ((pipes :initform (make-hash-table :test 'equal) :accessor pipes)
-   (source :initarg :source :initform (error "Source required.") :accessor source))
-  (:documentation "A class to hold easy access to pipe segments and the pipe system as a whole."))
+  ((%pipeline :initarg :pipeline :initform (make-splitter) :accessor pipeline)
+   (%names :initarg :names :initform (make-hash-table :test 'equal) :accessor names))
+  (:documentation ""))
 
-(defmethod initialize-instance :after ((pipeline pipeline) &rest rest)
-  (declare (ignore rest))
-  (%consider (source pipeline) (pipes pipeline)))
+(defgeneric find-place (pipeline place)
+  (:documentation "")
+  (:method ((pipeline pipeline) (place list))
+    (let ((current (pipeline pipeline)))
+      (loop for position in place
+            do (setf current (aref current position)))
+      current))
+  (:method ((pipeline pipeline) (name string))
+    (find-place pipeline (gethash name (names pipeline)))))
 
-(defun %enter (pipe table)
-  (if (name pipe)
-      (progn
-        (if (gethash (name pipe) table)
-            (format T "Warning: ~a is already in the table!" (name pipe)))
-        (setf (gethash (name pipe) table) pipe))))
+(defgeneric find-parent (pipeline place)
+  (:documentation "")
+  (:method ((pipeline pipeline) (place list))
+    (let ((parent (pipeline pipeline)))
+      (loop for i from 0 below (1- (length place))
+            for subset = place then (cdr subset)
+            for item = (car subset)
+            do (setf parent (aref parent item))
+            finally (return (values parent (second subset))))))
+  (:method ((pipeline pipeline) (name string))
+    (find-parent pipeline (gethash name (names pipeline)))))
 
-(defgeneric %consider (pipe table))
+(defgeneric add-pipe (pipeline pipe &optional place)
+  (:documentation "")
+  (:method ((pipeline pipeline) (pipe pipe) &optional place)
+    (vector-push-extend pipe (find-place pipeline place)))
+  (:method ((pipeline pipeline) (array array) &optional place)
+    (vector-push-extend array (find-place pipeline place)))
+  (:method ((pipeline pipeline) (array (eql :splitter)) &optional place)
+    (vector-push-extend (make-splitter) (find-place pipeline place))))
 
-(defmethod %consider (pipe table))
+(defgeneric remove-place (pipeline place)
+  (:documentation "")
+  (:method ((pipeline pipeline) place)
+    (multiple-value-bind (parent pos) (find-parent pipeline place)
+      (vector-pop-position parent pos))))
 
-(defmethod %consider ((pipe pipe) table)
-  (%enter pipe table)
-  (%consider (next pipe) table))
+(defgeneric insert-pipe (pipeline pipe place)
+  (:documentation "")
+  (:method ((pipeline pipeline) (pipe pipe) place)
+    (multiple-value-bind (parent pos) (find-parent pipeline place)
+      (vector-push-extend-position pipe parent pos)))
+  (:method ((pipeline pipeline) (array array) place)
+    (multiple-value-bind (parent pos) (find-parent pipeline place)
+      (vector-push-extend-position array parent pos)))
+  (:method ((pipeline pipeline) (array (eql :splitter)) place)
+    (insert-pipe pipeline (make-splitter) place)))
 
-(defmethod %consider ((pipe faucet) table)
-  (%enter pipe table))
-
-(defmethod %consider ((pipe splitter) table)
-  (%enter pipe table)
-  (dolist (next (targets pipe))
-    (%consider next table)))
-
-(defmacro build-pipeline (source &body pipes)
-  (labels ((fun (pipes)
-             (when pipes
-               (let ((type (car pipes))
-                     (args NIL))
-                 (when (listp type)
-                   (if (stringp (second type))
-                       (setf args (append `(:name ,(cdr type)) (cddr type)))
-                       (setf args (cdr type)))
-                   (setf type (car type)))
-                 `(make-instance ',type ,@args :next ,(fun (cdr pipes)))))))
-    `(connect-next ,source ,(fun pipes))))
-
-(defmethod print-flow ((pipeline pipeline) stream)
-  (print-flow (source pipeline) stream))
-
-(defmethod pass ((pipeline pipeline) message)
-  (pass (source pipeline) message))
-
-(defmethod add-pipe ((pipeline pipeline) class-or-instance &rest args)
-  (let ((instance (etypecase class-or-instance
-                    (symbol (apply #'make-instance class-or-instance args))
-                    (pipe class-or-instance))))
-    (if (name instance)
-        (setf (gethash (name instance) (pipes pipeline))
-              instance))
-    instance))
-
-(defmethod remove-pipe ((pipeline pipeline) instance-or-name)
-  (let ((instance (if (stringp instance-or-name)
-                      (gethash instance-or-name (pipes pipeline))
-                      instance-or-name)))
-    (when (and instance (name instance))
-      (remhash (name instance) (pipes pipeline))
-      instance)))
-
-(defmethod get-pipe ((pipeline pipeline) name)
-  (gethash name (pipes pipeline)))
+(defgeneric pass (pipe message)
+  (:documentation "")
+  (:method ((pipeline pipeline) message)
+    (pass (pipeline pipeline) message))
+  (:method ((array array) message)
+    (loop for item across array
+          do (setf message (pass item message))
+          while message))
+  (:method ((pipe pipe) message)
+    message))

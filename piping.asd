@@ -1,6 +1,6 @@
 #|
   This file is a part of Piping
-  (c) 2013 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
+  (c) 2014 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
   Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
@@ -10,26 +10,10 @@
 
 (defsystem piping
   :name "Piping"
-  :version "0.9.1"
+  :version "2.0.0"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :license "Artistic"
   :description "A library to enable simple message pipelines."
   :serial T
-  :components ((:file "package")
-               (:file "segment")
-               (:file "pipe")
-               (:file "source")
-               (:file "valve")
-               (:file "faucet")
-               (:file "splitter")
-               (:file "switch")
-               (:file "filter")
-               (:file "mixer")
-               (:file "pipeline"))
-  :depends-on (:local-time
-               :bordeaux-threads))
-
-(defsystem piping-doc
-  :name "Piping Doc"
-  :components ((:file "documentation"))
-  :depends-on (:piping :lquery-doc))
+  :components ((:file "package"))
+  :depends-on ())
