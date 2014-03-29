@@ -9,4 +9,32 @@
   (:nicknames #:org.tymoonnext.radiance.lib.piping
               #:org.tymoonnext.piping)
   (:use #:cl)
-  (:export))
+  ;; extra.lisp
+  (:export
+   #:filter
+   #:filter
+   #:printer
+   #:print-stream
+   #:switch
+   #:value
+   #:splitter)
+  ;; pipe.lisp
+  (:export
+   #:pipe)
+  ;; pipeline.lisp
+  (:export
+   #:make-splitter
+   #:pipeline
+   #:pipeline
+   #:names
+   #:find-place
+   #:find-parent
+   #:insert
+   #:withdraw
+   #:add-pipe
+   #:remove-place
+   #:insert-pipe
+   #:replace-pipe
+   #:move-place
+   #:set-name
+   #:pass))
