@@ -7,7 +7,7 @@
 (in-package #:org.tymoonnext.piping)
 
 (defclass pipe ()
-  () (:documentation ""))
+  () (:documentation "Base pipe class."))
 
 (defmethod print-object ((pipe pipe) stream)
   (format stream "[PIPE]" )
