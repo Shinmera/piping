@@ -6,9 +6,23 @@
 
 (in-package #:org.tymoonnext.piping)
 
-(defclass pipe ()
-  () (:documentation "Base pipe class."))
+(defclass segment () ()
+  (:documentation "Base segment class."))
 
-(defmethod print-object ((pipe pipe) stream)
+(defmethod print-object ((segment segment) stream)
   (format stream "[PIPE]" )
-  pipe)
+  segment)
+
+(defclass filter (segment) ()
+  (:documentation "Base filter class."))
+
+(defmethod print-object ((filter filter) stream)
+  (format stream ":FILTER:")
+  filter)
+
+(defclass faucet (segment) ()
+  (:documentation "Base faucet class."))
+
+(defmethod print-object ((faucet faucet) stream)
+  (format stream ">>FAUCET")
+  faucet)

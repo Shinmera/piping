@@ -11,8 +11,8 @@
   (:use #:cl)
   ;; extra.lisp
   (:export
-   #:filter
-   #:filter
+   #:predicate-filter
+   #:predicate
    #:printer
    #:print-stream
    #:switch
@@ -20,10 +20,12 @@
    #:splitter)
   ;; pipe.lisp
   (:export
-   #:pipe)
+   #:segment
+   #:filter
+   #:faucet)
   ;; pipeline.lisp
   (:export
-   #:make-splitter
+   #:make-pipe
    #:pipeline
    #:pipeline
    #:names
@@ -31,10 +33,10 @@
    #:find-parent
    #:insert
    #:withdraw
-   #:add-pipe
    #:remove-place
-   #:insert-pipe
-   #:replace-pipe
    #:move-place
+   #:add-segment
+   #:insert-segment
+   #:replace-segment
    #:set-name
    #:pass))

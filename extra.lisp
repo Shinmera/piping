@@ -6,23 +6,23 @@
 
 (in-package #:org.tymoonnext.piping)
 
-(defclass filter (pipe)
-  ((%filter :initarg :filter :initform (error "Filter required.") :accessor filter))
-  (:documentation "Pipe that filters messages according to a predicate function."))
+(defclass predicate-filter (filter)
+  ((%predicate :initarg :predicate :initform (error "Predicate function required.") :accessor predicate))
+  (:documentation "Segment that predicate-filters messages according to a predicate function."))
 
-(defmethod pass ((filter filter) message)
-  (when (funcall (filter filter) message)
+(defmethod pass ((filter predicate-filter) message)
+  (when (funcall (predicate filter) message)
     message))
 
-(defclass printer (pipe)
+(defclass printer (faucet)
   ((%stream :initarg :stream :initform *standard-output* :accessor print-stream))
-  (:documentation "Pipe that prints each message it receives."))
+  (:documentation "Segment that prints each message it receives."))
 
 (defmethod pass ((printer printer) message)
   (print message (print-stream printer))
   message)
 
-(defclass switch (pipe)
+(defclass switch (segmetn)
   ((%value :initarg :value :initform 0 :accessor value)
    (%splitter :initarg :splitter :initform (make-splitter) :accessor splitter))
   (:documentation "A switch that only passes to the pipe as set by its current value."))
