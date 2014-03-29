@@ -1,5 +1,5 @@
 #|
- This file is a part of Plump
+ This file is a part of Piping
  (c) 2014 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
  Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
@@ -40,14 +40,6 @@ FILL   --- If provided, empty spaces created by the move will be filled with thi
                 do (setf (aref array cursor) fill)))))
   array)
 
-(defun vector-push-extend-front (element vector)
-  "Pushes the element onto the front of the vector and extends if necessary.
-This operation is very costly and takes O(n) time as each element needs to
-be shifted as per ARRAY-SHIFT."
-  (array-shift vector)
-  (setf (aref vector 0) element)
-  (fill-pointer vector))
-
 (defun vector-push-extend-position (element vector position)
   "Pushes the element into the specified position and shifts everything
 to the right to make space. This is potentially very costly as all
@@ -55,14 +47,6 @@ elements after the given position need to be shifted as per ARRAY-SHIFT."
   (array-shift vector :from position)
   (setf (aref vector position) element)
   (fill-pointer vector))
-
-(defun vector-pop-front (vector)
-  "Pops the first element off the vector and returns it.
-This operation is very costly and takes O(n) time as each element needs to
-be shifted as per ARRAY-SHIFT."
-  (let ((front (aref vector 0)))
-    (array-shift vector :n -1)
-    front))
 
 (defun vector-pop-position (vector position)
   "Pops the element at the given position off the vector and returns it.
