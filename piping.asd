@@ -16,6 +16,7 @@
   :description "A library to enable simple message pipelines."
   :serial T
   :components ((:file "package")
+               (:file "array")
                (:file "pipe")
                (:file "pipeline")
                (:file "extra"))

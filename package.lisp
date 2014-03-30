@@ -17,7 +17,7 @@
    #:print-stream
    #:switch
    #:value
-   #:splitter)
+   #:pipe)
   ;; pipe.lisp
   (:export
    #:segment
