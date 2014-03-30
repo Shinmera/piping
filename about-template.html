@@ -1,0 +1,98 @@
+<!DOCTYPE html><!--
+  This file is a part of Piping
+  (c) 2014 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
+  Author: Nicolas Hafner <shinmera@tymoon.eu>
+  !--><html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Piping - About</title>
+    <style type="text/css">
+      code{font-family: Consolas, Inconsolata, monospace;}
+      code.line{margin-left: 20px;}
+      code.output{color: #882222;}
+      code.output:before{content:"=> ";}
+      code a{text-decoration: none; color: blue;}
+      h3{display: inline-block;margin:0;padding:0;}
+      .docs{list-style: none;}
+      .docs li{margin-bottom: 20px;}
+      .docs pre{margin: 0 0 0 10px; white-space: pre-wrap;}
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="piping-logo.png" alt="Piping"/>
+      <h1>v2.0.0</h1>
+    </header>
+    <div id="content">
+      <article>
+        <header><h2>What is Piping?</h2></header>
+        <p>Piping is a small library providing mechanisms to create message passing pipeline constructs.</p>
+      </article>
+      <article>
+        <header><h2>How To</h2></header>
+        <p>
+          Load Piping through Quicklisp or ASDF:
+        </p>
+        <code class="line">(ql:quickload :piping)</code>
+        <p>
+          Create a pipeline and add some pipe segments:
+        </p>
+        <code class="line">(defvar *pipeline* (make-instance 'pipeline))</code><br />
+        <code class="line">(add-segment *pipeline* (make-instance 'predicate-filter :predicate #'evenp))</code><br />
+        <code class="line">(add-segment *pipeline* (make-instance 'printer))</code>
+        <p>
+          Using pass you can then pass items down the pipeline:
+        </p>
+        <code class="line">(pass *pipeline* 7)</code><br />
+        <code class="line">(pass *pipeline* 6)</code><br />
+        <p>
+          Often times you'll want to create pipe branches so to speak, to split off passing and filter for different things:
+        </p>
+        <code class="line">(add-segment *pipeline* (make-pipe))</code><br />
+        <code class="line">(add-segment *pipeline* (make-instance 'predicate-filter :predicate #'zerop) '(2))</code><br />
+        <code class="line">(add-segment *pipeline* (make-instance 'printer) '(2))</code>
+        <p>
+          The last argument to <code>add-segment</code> is a place indicator. A place is always a list of indexes, each index specifying the index within the current pipe. <code>add-segment</code> then adds the segment to the end of the pipe, in this case the pipe we added.
+        </p>
+        <p>
+          In order to have easier access to places, you can use <code>set-name</code> to create names for certain places. Do note that modifying the pipeline might change or destroy names. See the each function's docstring for more information.
+        </p>
+        <p>
+          Creating custom pipe segments is just a question of subclassing <code>segment</code> and defining the <code>pass</code> method. If your segment should act like a pipe, you'll have to define methods for <code>find-place</code>, <code>find-parent</code>, <code>insert</code> and <code>withdraw</code> as well.
+        </p>
+        <p>
+          Visualizing the pipeline can be done relatively well by simply printing the main pipe:
+        </p>
+        <code class="line">(pipeline *pipeline*)</code><br />
+        <code class="line output">#(:FILTER: &gt;&gt;FAUCET #(:FILTER: &gt;&gt;FAUCET))</code>
+      </article>
+      <article>
+        <header><h2>Other Guff</h2></header>
+        <p>
+          Piping is licensed under the <a href="http://opensource.org/licenses/Artistic-2.0">Artistic License 2.0</a> and ©2014 TymoonNET/NexT, <a href="http://shinmera.com">Nicolas Hafner</a>.<br/>
+          This library can be obtained via git on <a href="https://github.com/Shinmera/piping.git">https://github.com/Shinmera/piping.git</a>. For questions, patches or suggestions, please contact me via <a href="mailto:shinmera@tymoon.eu">email</a> or write a <a href="https://github.com/Shinmera/piping/issues/new">github issue</a>.
+        </p>
+      </article>
+      <article>
+        <header><h2><a name="PIPING" href="#PIPING">Piping-API Package Index</a></h2></header>
+        <ul id="docs" class="docs">
+          <li id="template">
+            <article>
+              <a name="Foo" class="anchor"></a>
+              <header>
+                <span class="functype">test</span>
+                <code>
+                  <h3><a href="#Foo" class="funcname">Foo</a></h3>
+                  <span class="funcargs">()</span>
+                </code>
+              </header>
+              <pre class="funcdesc">
+                Foobar
+              </pre>
+            </article>
+          </li>
+        </ul>
+      </article>
+    </div>
+  </body>
+</html>
