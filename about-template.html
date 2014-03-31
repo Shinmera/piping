@@ -46,7 +46,7 @@
         <code class="line">(pass *pipeline* 7)</code><br />
         <code class="line">(pass *pipeline* 6)</code><br />
         <p>
-          Often times you'll want to create pipe branches so to speak, to split off passing and filter for different things:
+          Often times you'll want to create pipe branches so to speak, to split off passing and to filter for different things:
         </p>
         <code class="line">(add-segment *pipeline* (make-pipe))</code><br />
         <code class="line">(add-segment *pipeline* (make-instance 'predicate-filter :predicate #'zerop) '(2))</code><br />
