@@ -149,9 +149,8 @@ by changing their place as well.
 Returns the segment.")
   (:method ((pipeline pipeline) place new-place)
     (prog1
-        (multiple-value-bind (parent pos) (find-parent pipeline place)
-          (let ((segment (remove-segment pipeline place)))
-            (insert-segment pipeline segment new-place)))
+        (let ((segment (remove-segment pipeline place)))
+          (insert-segment pipeline segment new-place))
       (loop for k being the hash-keys of (names pipeline)
             for v being the hash-values of (names pipeline)
             when (and (<= (length place) (length v))
