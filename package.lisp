@@ -33,10 +33,10 @@
    #:find-parent
    #:insert
    #:withdraw
-   #:remove-place
-   #:move-place
+   #:remove-segment
    #:add-segment
    #:insert-segment
    #:replace-segment
+   #:move-segment
    #:set-name
    #:pass))

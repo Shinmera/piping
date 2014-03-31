@@ -76,7 +76,7 @@ other items and without leaving any empty spaces within the parent.
 Returns the segment.
 
 Do note that using withdraw directly can affect names and make them invalid or point to unexpected
-segments. You should always use remove-place instead if possible.")
+segments. You should always use remove-segment instead if possible.")
   (:method ((array array) &optional position)
     (if position
         (vector-pop-position array position)
@@ -94,8 +94,8 @@ the pipe to. Returns the segment.")
   (:method ((pipeline pipeline) (array (eql :pipe)) &optional place)
     (insert (make-pipe) (find-place pipeline place))))
 ;; FIXME: Removing before will destroy place names.
-(defgeneric remove-place (pipeline place)
-  (:documentation "Removes the given place (as well as its children, if any).
+(defgeneric remove-segment (pipeline place)
+  (:documentation "Removes the given segment (as well as its children, if any).
 This also removes any names that either match or go through the specified place
 and adapts names that would be affected by a place shift. 
 
@@ -133,16 +133,16 @@ Note that this will destroy names due to REMOVE-PLACE.
 
 Returns the segment.")
   (:method ((pipeline pipeline) place (segment segment))
-    (remove-place pipeline place)
+    (remove-segment pipeline place)
     (insert-segment pipeline segment place))
   (:method ((pipeline pipeline) place (array array))
-    (remove-place pipeline place)
+    (remove-segment pipeline place)
     (insert-segment pipeline array place))
   (:method ((pipeline pipeline) place (array (eql :pipe)))
     (replace-segment pipeline place (make-pipe))))
 
-(defgeneric move-place (pipeline place new-place)
-  (:documentation "Moves a place to another while preserving names.
+(defgeneric move-segment (pipeline place new-place)
+  (:documentation "Moves a segment to another while preserving names.
 This attempts to fix names associated with the place or deeper places
 by changing their place as well.
 
@@ -150,7 +150,7 @@ Returns the segment.")
   (:method ((pipeline pipeline) place new-place)
     (prog1
         (multiple-value-bind (parent pos) (find-parent pipeline place)
-          (let ((segment (remove-place pipeline place)))
+          (let ((segment (remove-segment pipeline place)))
             (insert-segment pipeline segment new-place)))
       (loop for k being the hash-keys of (names pipeline)
             for v being the hash-values of (names pipeline)
