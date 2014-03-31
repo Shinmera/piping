@@ -94,7 +94,7 @@ This also removes any names that either match or go through the specified place.
           when (and (<= (length place) (length v))
                     (every #'= place v))
             do (remhash k (names pipeline)))))
-
+;; FIXME: Inserting before will destroy place names.
 (defgeneric insert-segment (pipeline segment place)
   (:documentation "Insert the segment at the given place.
 Note that the segment is always inserted into the parent as specified by the place
@@ -110,7 +110,9 @@ and found by FIND-PARENT and inserted into the position as per INSERT.")
 
 (defgeneric replace-segment (pipeline place pipe)
   (:documentation "Replace a place with a pipe.
-This happens simply through REMOVE-PLACE and INSERT-PIPE.")
+This happens simply through REMOVE-PLACE and INSERT-PIPE.
+
+Note that this will destroy names due to REMOVE-PLACE.")
   (:method ((pipeline pipeline) place (segment segment))
     (remove-place pipeline place)
     (insert-segment pipeline segment place))
