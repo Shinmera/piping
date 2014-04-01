@@ -35,7 +35,7 @@ As such, (1 4) matches the following:
         array))
   (:method ((pipeline pipeline) (place list))
     (find-place (pipeline pipeline) place))
-  (:method ((pipeline pipeline) (name string))
+  (:method ((pipeline pipeline) (name symbol))
     (find-place pipeline (gethash name (names pipeline)))))
 
 (defgeneric find-parent (segment place)
@@ -50,7 +50,7 @@ As secondary value it returns the position of the matched item within the parent
         (find-parent (aref array (pop place)) place)))
   (:method ((pipeline pipeline) (place list))
     (find-parent (pipeline pipeline) place))
-  (:method ((pipeline pipeline) (name string))
+  (:method ((pipeline pipeline) (name symbol))
     (find-parent pipeline (gethash name (names pipeline)))))
 
 (defgeneric insert (segment place &optional position)
@@ -185,7 +185,7 @@ Returns the segment.")
   (:documentation "Associates a place with a name so it can be accessed more easily.
 
 Returns the name.")
-  (:method ((pipeline pipeline) (place list) name)
+  (:method ((pipeline pipeline) (place list) (name symbol))
     (setf (gethash name (names pipeline)) place)
     name))
 
