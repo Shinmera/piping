@@ -93,7 +93,7 @@ the pipe to. Returns the segment.")
     (insert array (find-place pipeline place)))
   (:method ((pipeline pipeline) (array (eql :pipe)) &optional place)
     (insert (make-pipe) (find-place pipeline place))))
-;; FIXME: Removing before will destroy place names.
+
 (defgeneric remove-segment (pipeline place)
   (:documentation "Removes the given segment (as well as its children, if any).
 This also removes any names that either match or go through the specified place
@@ -104,12 +104,18 @@ Returns the segment.")
     (prog1
         (multiple-value-bind (parent pos) (find-parent pipeline place)
           (withdraw parent pos))
-      (loop for k being the hash-keys of (names pipeline)
+      (loop with parent = (subseq place 0 (1- (length place)))
+            with pos = (car (last place))
+            for k being the hash-keys of (names pipeline)
             for v being the hash-values of (names pipeline)
             when (and (<= (length place) (length v))
                       (every #'= place v))
-              do (remhash k (names pipeline))))))
-;; FIXME: Inserting before will destroy place names.
+              do (remhash k (names pipeline))
+            when (and (<= (length parent) (length v))
+                      (every #'= parent v)
+                      (< pos (nth (length parent) v)))
+              do (decf (nth (length parent) v))))))
+
 (defgeneric insert-segment (pipeline segment place)
   (:documentation "Insert the segment at the given place.
 Note that the segment is always inserted into the parent as specified by the place
@@ -117,11 +123,29 @@ and found by FIND-PARENT and inserted into the position as per INSERT.
 
 Returns the segment.")
   (:method ((pipeline pipeline) (segment segment) place)
-    (multiple-value-bind (parent pos) (find-parent pipeline place)
-      (insert segment parent pos)))
+    (prog1
+        (multiple-value-bind (parent pos) (find-parent pipeline place)
+          (insert segment parent pos))
+      (loop with parent = (subseq place 0 (1- (length place)))
+            with pos = (car (last place))
+            for k being the hash-keys of (names pipeline)
+            for v being the hash-values of (names pipeline)
+            when (and (<= (length parent) (length v))
+                      (every #'= parent v)
+                      (<= pos (nth (length parent) v)))
+              do (incf (nth (length parent) v)))))
   (:method ((pipeline pipeline) (array array) place)
-    (multiple-value-bind (parent pos) (find-parent pipeline place)
-      (insert array parent pos)))
+    (prog1
+        (multiple-value-bind (parent pos) (find-parent pipeline place)
+          (insert array parent pos))
+      (loop with parent = (subseq place 0 (1- (length place)))
+            with pos = (car (last place))
+            for k being the hash-keys of (names pipeline)
+            for v being the hash-values of (names pipeline)
+            when (and (<= (length parent) (length v))
+                      (every #'= parent v)
+                      (<= pos (nth (length parent) v)))
+              do (incf (nth (length parent) v)))))
   (:method ((pipeline pipeline) (array (eql :pipe)) place)
     (insert-segment pipeline (make-pipe) place)))
 
