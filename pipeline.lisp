@@ -36,7 +36,7 @@ As such, (1 4) matches the following:
   (:method ((pipeline pipeline) (place list))
     (find-place (pipeline pipeline) place))
   (:method ((pipeline pipeline) (name symbol))
-    (find-place pipeline (gethash name (names pipeline)))))
+    (find-place (pipeline pipeline) (gethash name (names pipeline)))))
 
 (defgeneric find-parent (segment place)
   (:documentation "Same as FIND-PLACE, except it returns the parent of the matched item.
@@ -51,7 +51,7 @@ As secondary value it returns the position of the matched item within the parent
   (:method ((pipeline pipeline) (place list))
     (find-parent (pipeline pipeline) place))
   (:method ((pipeline pipeline) (name symbol))
-    (find-parent pipeline (gethash name (names pipeline)))))
+    (find-parent (pipeline pipeline) (gethash name (names pipeline)))))
 
 (defgeneric insert (segment place &optional position)
   (:documentation "Appends the item to the given place unless a specific position is given.
