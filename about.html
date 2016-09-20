@@ -1,143 +1,80 @@
-<!DOCTYPE html><!--
-  This file is a part of Piping
-  (c) 2014 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
-  Author: Nicolas Hafner <shinmera@tymoon.eu>
-  !--><html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8"/>
-    <title>Piping - About</title>
-    <style type="text/css">
-      code{font-family: Consolas, Inconsolata, monospace;}
-      code.line{margin-left: 20px;}
-      code.output{color: #882222;}
-      code.output:before{content:"=> ";}
-      code a{text-decoration: none; color: blue;}
-      h3{display: inline-block;margin:0;padding:0;}
-      .docs{list-style: none;}
-      .docs li{margin-bottom: 20px;}
-      .docs pre{margin: 0 0 0 10px; white-space: pre-wrap;}
-    </style>
-  </head>
-  <body>
-    <header>
-      <img src="piping-logo.png" alt="Piping"/>
-      <h1>v2.0.0</h1>
-    </header>
-    <div id="content">
-      <article>
-        <header><h2>What is Piping?</h2></header>
-        <p>Piping is a small library providing mechanisms to create message passing pipeline constructs.</p>
-      </article>
-      <article>
-        <header><h2>How To</h2></header>
-        <p>
-          Load Piping through Quicklisp or ASDF:
-        </p>
-        <code class="line">(ql:quickload :piping)</code>
-        <p>
-          Create a pipeline and add some pipe segments:
-        </p>
-        <code class="line">(defvar *pipeline* (make-instance 'pipeline))</code><br/>
-        <code class="line">(add-segment *pipeline* (make-instance 'predicate-filter :predicate #'evenp))</code><br/>
-        <code class="line">(add-segment *pipeline* (make-instance 'printer))</code>
-        <p>
-          Using pass you can then pass items down the pipeline:
-        </p>
-        <code class="line">(pass *pipeline* 7)</code><br/>
-        <code class="line">(pass *pipeline* 6)</code><br/>
-        <p>
-          Often times you'll want to create pipe branches so to speak, to split off passing and to filter for different things:
-        </p>
-        <code class="line">(add-segment *pipeline* (make-pipe))</code><br/>
-        <code class="line">(add-segment *pipeline* (make-instance 'predicate-filter :predicate #'zerop) '(2))</code><br/>
-        <code class="line">(add-segment *pipeline* (make-instance 'printer) '(2))</code>
-        <p>
-          The last argument to <code>add-segment</code> is a place indicator. A place is always a list of indexes, each index specifying the index within the current pipe. <code>add-segment</code> then adds the segment to the end of the pipe, in this case the pipe we added.
-        </p>
-        <p>
-          In order to have easier access to places, you can use <code>set-name</code> to create names for certain places. Do note that modifying the pipeline might change or destroy names. See the each function's docstring for more information.
-        </p>
-        <p>
-          Creating custom pipe segments is just a question of subclassing <code>segment</code> and defining the <code>pass</code> method. If your segment should act like a pipe, you'll have to define methods for <code>find-place</code>, <code>find-parent</code>, <code>insert</code> and <code>withdraw</code> as well.
-        </p>
-        <p>
-          Visualizing the pipeline can be done relatively well by simply printing the main pipe:
-        </p>
-        <code class="line">(pipeline *pipeline*)</code><br/>
-        <code class="line output">#(:FILTER: &gt;&gt;FAUCET #(:FILTER: &gt;&gt;FAUCET))</code>
-      </article>
-      <article>
-        <header><h2>Other Guff</h2></header>
-        <p>
-          Piping is licensed under the <a href="http://opensource.org/licenses/Artistic-2.0">Artistic License 2.0</a> and ©2014 TymoonNET/NexT, <a href="http://shinmera.com">Nicolas Hafner</a>.<br/>
-          This library can be obtained via git on <a href="https://github.com/Shinmera/piping.git">https://github.com/Shinmera/piping.git</a>. For questions, patches or suggestions, please contact me via <a href="mailto:shinmera@tymoon.eu">email</a> or write a <a href="https://github.com/Shinmera/piping/issues/new">github issue</a>.
-        </p>
-      </article>
-      <article>
-        <header><h2><a name="PIPING" href="#PIPING">Piping-API Package Index</a></h2></header>
-        <ul id="docs" class="docs"><li id="template">
-            <article>
-              <a class="anchor" name="ADD-SEGMENT"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#ADD-SEGMENT">ADD-SEGMENT</a></h3>
-                  <span class="funcargs">(PIPELINE SEGMENT &amp;OPTIONAL PLACE)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Add a new segment to the pipeline.
+<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml"> <head> <meta charset="utf-8"/> <title>Piping</title> <meta name="viewport" content="width=device-width"/> <meta name="description" content="A library to enable simple message pipelines."/> <meta name="author" content="Nicolas Hafner &lt;shinmera@tymoon.eu&gt;"/> <style type="text/css"> body{
+          max-width: 1024px;
+          margin: 0 auto 0 auto;
+          font-family: sans-serif;
+          color: #333333;
+          font-size: 14pt;
+          padding: 5px;
+      }
+
+      body>header{
+          display:flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          max-width: 100%;
+      }
+
+      img{
+          max-width: 100%;
+          max-height: 100%;
+      }
+
+      code{
+          font-family: Consolas, Inconsolata, monospace;
+      }
+
+      a{
+          text-decoration: none;
+          color: #0055AA;
+      }
+
+      #documentation{
+          text-align: justify;
+      }
+
+      #documentation pre{
+          margin-left: 20px;
+      }
+
+      #symbol-index>ul{
+          list-style: none;
+          padding: 0;
+      }
+      #symbol-index .package>ul{
+          list-style: none;
+          padding: 0 0 0 10px;
+      }
+      #symbol-index .package .nicknames{
+          font-weight: normal;
+      }
+      #symbol-index .package h4{
+          display: inline-block;
+          margin: 0;
+      }
+      #symbol-index .package article{
+          margin: 0 0 15px 0;
+      }
+      #symbol-index .package article header{
+          font-size: 1.2em;
+          font-weight: normal;
+      }
+      #symbol-index .package .name{
+          margin-right: 5px;
+      }
+      #symbol-index .package .docstring{
+          margin: 0 0 0 15px;
+          white-space: pre-wrap;
+          font-size: 12pt;
+      }
+
+      @media (max-width: 800px){
+          body{font-size: 12pt;}
+      } </style> </head> <body> <header> <h1>piping</h1> <span class="version">2.0.0</span> <p class="description">A library to enable simple message pipelines.</p> </header> <main> <article id="documentation">  <div><h1>piping</h1> <p>A Common Lisp library to enable simple message pipelines.</p> <p>See <a href="http://shinmera.github.io/piping/">about.html</a> for documentation, examples and package index.</p> </div>  </article> <article id="copyright">  <h2>Copyright</h2> <span>piping</span> is licensed under the <span><a href="https://tldrlegal.com/search?q=Artistic">Artistic</a></span> license.  © <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span> .    </article>  <article id="symbol-index"> <h2>Package Index</h2> <ul><li class="package"> <h3> <a name="PIPING" href="#PIPING">PIPING</a> <span class="nicknames">(ORG.TYMOONNEXT.PIPING ORG.TYMOONNEXT.RADIANCE.LIB.PIPING)</span> </h3> <ul><li> <a name="PIPING:FAUCET"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#PIPING:FAUCET">FAUCET</a></code></h4>  </header> <pre class="docstring">Base faucet class.</pre> </article> </li><li> <a name="PIPING:FILTER"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#PIPING:FILTER">FILTER</a></code></h4>  </header> <pre class="docstring">Base filter class.</pre> </article> </li><li> <a name="PIPING:PIPELINE"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#PIPING:PIPELINE">PIPELINE</a></code></h4>  </header> <pre class="docstring">Base pipeline object that is necessary to orchestrate piping systems.</pre> </article> </li><li> <a name="PIPING:PREDICATE-FILTER"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#PIPING:PREDICATE-FILTER">PREDICATE-FILTER</a></code></h4>  </header> <pre class="docstring">Segment that predicate-filters messages according to a predicate function.</pre> </article> </li><li> <a name="PIPING:PRINTER"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#PIPING:PRINTER">PRINTER</a></code></h4>  </header> <pre class="docstring">Segment that prints each message it receives.</pre> </article> </li><li> <a name="PIPING:SEGMENT"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#PIPING:SEGMENT">SEGMENT</a></code></h4>  </header> <pre class="docstring">Base segment class.</pre> </article> </li><li> <a name="PIPING:SWITCH"> </a> <article> <header class="class"> <span class="type">class</span>  <h4 class="name"><code><a href="#PIPING:SWITCH">SWITCH</a></code></h4>  </header> <pre class="docstring">A switch that only passes to the pipe as set by its current value.</pre> </article> </li><li> <a name="PIPING:NAMES"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:NAMES">NAMES</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring"/> </article> </li><li> <a name="PIPING:PIPE"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:PIPE">PIPE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring"/> </article> </li><li> <a name="PIPING:PIPELINE"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:PIPELINE">PIPELINE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring"/> </article> </li><li> <a name="PIPING:PREDICATE"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:PREDICATE">PREDICATE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring"/> </article> </li><li> <a name="PIPING:PRINT-STREAM"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:PRINT-STREAM">PRINT-STREAM</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring"/> </article> </li><li> <a name="PIPING:VALUE"> </a> <article> <header class="accessor"> <span class="type">accessor</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:VALUE">VALUE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">OBJECT</code><code>)</code>  </header> <pre class="docstring"/> </article> </li><li> <a name="PIPING:MAKE-PIPE"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:MAKE-PIPE">MAKE-PIPE</a></code></h4> <code class="qualifiers"></code> <code class="arguments"></code><code>)</code>  </header> <pre class="docstring">Creates a new splitter array.</pre> </article> </li><li> <a name="PIPING:ADD-SEGMENT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:ADD-SEGMENT">ADD-SEGMENT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">PIPELINE SEGMENT &amp;OPTIONAL PLACE</code><code>)</code>  </header> <pre class="docstring">Add a new segment to the pipeline.
 If place is set, the pipe is added to the specified place as per INSERT.
 The place specified is expected to be a splitter or similar to append
-the pipe to. Returns the segment.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="FAUCET"/>
-              <header>
-                <span class="functype">EXTERNAL CLASS</span>
-                <code>
-                  <h3><a class="funcname" href="#FAUCET">FAUCET</a></h3>
-                  <span class="funcargs"></span>
-                </code>
-              </header>
-              <pre class="funcdesc">Base faucet class.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="FILTER"/>
-              <header>
-                <span class="functype">EXTERNAL CLASS</span>
-                <code>
-                  <h3><a class="funcname" href="#FILTER">FILTER</a></h3>
-                  <span class="funcargs"></span>
-                </code>
-              </header>
-              <pre class="funcdesc">Base filter class.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="FIND-PARENT"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#FIND-PARENT">FIND-PARENT</a></h3>
-                  <span class="funcargs">(SEGMENT PLACE)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Same as FIND-PLACE, except it returns the parent of the matched item.
-As secondary value it returns the position of the matched item within the parent.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="FIND-PLACE"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#FIND-PLACE">FIND-PLACE</a></h3>
-                  <span class="funcargs">(SEGMENT PLACE)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Searches and returns the segment as designated by PLACE.
+the pipe to. Returns the segment.</pre> </article> </li><li> <a name="PIPING:FIND-PARENT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:FIND-PARENT">FIND-PARENT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SEGMENT PLACE</code><code>)</code>  </header> <pre class="docstring">Same as FIND-PLACE, except it returns the parent of the matched item.
+As secondary value it returns the position of the matched item within the parent.</pre> </article> </li><li> <a name="PIPING:FIND-PLACE"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:FIND-PLACE">FIND-PLACE</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SEGMENT PLACE</code><code>)</code>  </header> <pre class="docstring">Searches and returns the segment as designated by PLACE.
 A place is a list of signed integers, each denoting the position of the item
 within the current splitter or segment. Subsequent numbers descend into the
 item matched by the previous number.
@@ -145,94 +82,22 @@ item matched by the previous number.
 As such, (1 4) matches the following:
  ([] () [] [])
       - ([] [] [] [] [] [])
-                      ^^</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="INSERT"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#INSERT">INSERT</a></h3>
-                  <span class="funcargs">(SEGMENT PLACE &amp;OPTIONAL POSITION)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Appends the item to the given place unless a specific position is given.
+                      ^^</pre> </article> </li><li> <a name="PIPING:INSERT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:INSERT">INSERT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SEGMENT PLACE &amp;OPTIONAL POSITION</code><code>)</code>  </header> <pre class="docstring">Appends the item to the given place unless a specific position is given.
 If position is set, the item is expected to be inserted at the specified position, without
 replacing or disturbing any other items. 
 
 Returns the segment.
 
 Do note that using insert directly can affect names and make them invalid or point to unexpected
-segments. You should always use add-segment or insert-segment instead if possible.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="INSERT-SEGMENT"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#INSERT-SEGMENT">INSERT-SEGMENT</a></h3>
-                  <span class="funcargs">(PIPELINE SEGMENT PLACE)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Insert the segment at the given place.
+segments. You should always use add-segment or insert-segment instead if possible.</pre> </article> </li><li> <a name="PIPING:INSERT-SEGMENT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:INSERT-SEGMENT">INSERT-SEGMENT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">PIPELINE SEGMENT PLACE</code><code>)</code>  </header> <pre class="docstring">Insert the segment at the given place.
 Note that the segment is always inserted into the parent as specified by the place
 and found by FIND-PARENT and inserted into the position as per INSERT. 
 
-Returns the segment.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="MAKE-PIPE"/>
-              <header>
-                <span class="functype">EXTERNAL FUNCTION</span>
-                <code>
-                  <h3><a class="funcname" href="#MAKE-PIPE">MAKE-PIPE</a></h3>
-                  <span class="funcargs">()</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Creates a new splitter array.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="MOVE-SEGMENT"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#MOVE-SEGMENT">MOVE-SEGMENT</a></h3>
-                  <span class="funcargs">(PIPELINE PLACE NEW-PLACE)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Moves a segment to another while preserving names.
+Returns the segment.</pre> </article> </li><li> <a name="PIPING:MOVE-SEGMENT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:MOVE-SEGMENT">MOVE-SEGMENT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">PIPELINE PLACE NEW-PLACE</code><code>)</code>  </header> <pre class="docstring">Moves a segment to another while preserving names.
 This attempts to fix names associated with the place or deeper places
 by changing their place as well.
 
-Returns the segment.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="NAMES"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#NAMES">NAMES</a></h3>
-                  <span class="funcargs">(OBJECT)</span>
-                </code>
-              </header>
-              <pre class="funcdesc"></pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="PASS"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#PASS">PASS</a></h3>
-                  <span class="funcargs">(SEGMENT MESSAGE)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Pass a message through a segment.
+Returns the segment.</pre> </article> </li><li> <a name="PIPING:PASS"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:PASS">PASS</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SEGMENT MESSAGE</code><code>)</code>  </header> <pre class="docstring">Pass a message through a segment.
 
 Note for implementors of this method for custom segments:
 You are expected to return a message object, which will be
@@ -243,196 +108,22 @@ itself directly will of course als be reflected at any other
 point in the pipeline passing, so muting the passed object
 should be avoided wherever possible.
 
-Returns the message.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="PIPE"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#PIPE">PIPE</a></h3>
-                  <span class="funcargs">(OBJECT)</span>
-                </code>
-              </header>
-              <pre class="funcdesc"></pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="PIPELINE"/>
-              <header>
-                <span class="functype">EXTERNAL CLASS</span>
-                <code>
-                  <h3><a class="funcname" href="#PIPELINE">PIPELINE</a></h3>
-                  <span class="funcargs"></span>
-                </code>
-              </header>
-              <pre class="funcdesc">Base pipeline object that is necessary to orchestrate piping systems.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="PIPELINE"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#PIPELINE">PIPELINE</a></h3>
-                  <span class="funcargs">(OBJECT)</span>
-                </code>
-              </header>
-              <pre class="funcdesc"></pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="PREDICATE"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#PREDICATE">PREDICATE</a></h3>
-                  <span class="funcargs">(OBJECT)</span>
-                </code>
-              </header>
-              <pre class="funcdesc"></pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="PREDICATE-FILTER"/>
-              <header>
-                <span class="functype">EXTERNAL CLASS</span>
-                <code>
-                  <h3><a class="funcname" href="#PREDICATE-FILTER">PREDICATE-FILTER</a></h3>
-                  <span class="funcargs"></span>
-                </code>
-              </header>
-              <pre class="funcdesc">Segment that predicate-filters messages according to a predicate function.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="PRINT-STREAM"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#PRINT-STREAM">PRINT-STREAM</a></h3>
-                  <span class="funcargs">(OBJECT)</span>
-                </code>
-              </header>
-              <pre class="funcdesc"></pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="PRINTER"/>
-              <header>
-                <span class="functype">EXTERNAL CLASS</span>
-                <code>
-                  <h3><a class="funcname" href="#PRINTER">PRINTER</a></h3>
-                  <span class="funcargs"></span>
-                </code>
-              </header>
-              <pre class="funcdesc">Segment that prints each message it receives.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="REMOVE-SEGMENT"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#REMOVE-SEGMENT">REMOVE-SEGMENT</a></h3>
-                  <span class="funcargs">(PIPELINE PLACE)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Removes the given segment (as well as its children, if any).
+Returns the message.</pre> </article> </li><li> <a name="PIPING:REMOVE-SEGMENT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:REMOVE-SEGMENT">REMOVE-SEGMENT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">PIPELINE PLACE</code><code>)</code>  </header> <pre class="docstring">Removes the given segment (as well as its children, if any).
 This also removes any names that either match or go through the specified place
 and adapts names that would be affected by a place shift. 
 
-Returns the segment.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="REPLACE-SEGMENT"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#REPLACE-SEGMENT">REPLACE-SEGMENT</a></h3>
-                  <span class="funcargs">(PIPELINE PLACE PIPE)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Replace a place with a pipe.
+Returns the segment.</pre> </article> </li><li> <a name="PIPING:REPLACE-SEGMENT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:REPLACE-SEGMENT">REPLACE-SEGMENT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">PIPELINE PLACE PIPE</code><code>)</code>  </header> <pre class="docstring">Replace a place with a pipe.
 This happens simply through REMOVE-PLACE and INSERT-PIPE.
 
 Note that this will destroy names due to REMOVE-PLACE.
 
-Returns the segment.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="SEGMENT"/>
-              <header>
-                <span class="functype">EXTERNAL CLASS</span>
-                <code>
-                  <h3><a class="funcname" href="#SEGMENT">SEGMENT</a></h3>
-                  <span class="funcargs"></span>
-                </code>
-              </header>
-              <pre class="funcdesc">Base segment class.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="SET-NAME"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#SET-NAME">SET-NAME</a></h3>
-                  <span class="funcargs">(PIPELINE PLACE NAME)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Associates a place with a name so it can be accessed more easily.
+Returns the segment.</pre> </article> </li><li> <a name="PIPING:SET-NAME"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:SET-NAME">SET-NAME</a></code></h4> <code class="qualifiers"></code> <code class="arguments">PIPELINE PLACE NAME</code><code>)</code>  </header> <pre class="docstring">Associates a place with a name so it can be accessed more easily.
 
-Returns the name.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="SWITCH"/>
-              <header>
-                <span class="functype">EXTERNAL CLASS</span>
-                <code>
-                  <h3><a class="funcname" href="#SWITCH">SWITCH</a></h3>
-                  <span class="funcargs"></span>
-                </code>
-              </header>
-              <pre class="funcdesc">A switch that only passes to the pipe as set by its current value.</pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="VALUE"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#VALUE">VALUE</a></h3>
-                  <span class="funcargs">(OBJECT)</span>
-                </code>
-              </header>
-              <pre class="funcdesc"></pre>
-            </article>
-          </li><li id="template">
-            <article>
-              <a class="anchor" name="WITHDRAW"/>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3><a class="funcname" href="#WITHDRAW">WITHDRAW</a></h3>
-                  <span class="funcargs">(PLACE &amp;OPTIONAL POSITION)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Removes an item from the place, by default from the end unless position is set.
+Returns the name.</pre> </article> </li><li> <a name="PIPING:WITHDRAW"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#PIPING:WITHDRAW">WITHDRAW</a></code></h4> <code class="qualifiers"></code> <code class="arguments">PLACE &amp;OPTIONAL POSITION</code><code>)</code>  </header> <pre class="docstring">Removes an item from the place, by default from the end unless position is set.
 If position is given, it is expected that the specified item is removed without disturbing any
 other items and without leaving any empty spaces within the parent. 
 
 Returns the segment.
 
 Do note that using withdraw directly can affect names and make them invalid or point to unexpected
-segments. You should always use remove-segment instead if possible.</pre>
-            </article>
-          </li></ul>
-      </article>
-    </div>
-  </body>
-</html>
+segments. You should always use remove-segment instead if possible.</pre> </article> </li></ul> </li></ul> </article>  </main> </body> </html> 
