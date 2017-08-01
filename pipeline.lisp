@@ -204,10 +204,11 @@ should be avoided wherever possible.
 Returns the message.")
   (:method ((pipeline pipeline) message)
     (pass (pipeline pipeline) message))
-  (:method ((array array) message)
-    (loop for item across array
-          do (setf message (pass item message))
-          while message)
+  (:method ((vector vector) message)
+    (let ((message message))
+      (loop for item across vector
+            do (setf message (pass item message))
+            while message))
     message)
   (:method ((segment segment) message)
     message))
