@@ -4,10 +4,6 @@
   Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(defpackage org.tymoonnext.radiance.lib.piping.asd
-  (:use :cl :asdf))
-(in-package :org.tymoonnext.radiance.lib.piping.asd)
-
 (defsystem piping
   :name "Piping"
   :version "2.0.0"
