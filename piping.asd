@@ -10,6 +10,9 @@
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :license "Artistic"
   :description "A library to enable simple message pipelines."
+  :homepage "https://shinmera.github.io/piping/"
+  :bug-tracker "https://github.com/Shinmera/piping/issues"
+  :source-control (:git "https://github.com/Shinmera/piping.git")
   :serial T
   :components ((:file "package")
                (:file "array")
