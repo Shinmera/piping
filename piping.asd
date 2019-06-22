@@ -8,7 +8,7 @@
   :name "Piping"
   :version "2.0.0"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
-  :license "Artistic"
+  :license "zlib"
   :description "A library to enable simple message pipelines."
   :homepage "https://shinmera.github.io/piping/"
   :bug-tracker "https://github.com/Shinmera/piping/issues"
