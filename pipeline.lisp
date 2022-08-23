@@ -35,8 +35,14 @@ As such, (1 4) matches the following:
         array))
   (:method ((pipeline pipeline) (place list))
     (find-place (pipeline pipeline) place))
+  ;; Special-case for NIL, which according to CLOS is apparently a symbol, rather than a list
+  (:method ((pipeline pipeline) (place null))
+    (pipeline pipeline))
   (:method ((pipeline pipeline) (name symbol))
-    (find-place (pipeline pipeline) (gethash name (names pipeline)))))
+    (multiple-value-bind (path found)
+        (gethash name (names pipeline))
+      (when found
+        (find-place (pipeline pipeline) path)))))
 
 (defgeneric find-parent (segment place)
   (:documentation "Same as FIND-PLACE, except it returns the parent of the matched item.
