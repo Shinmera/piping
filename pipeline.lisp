@@ -15,34 +15,62 @@
    (%names :initarg :names :initform (make-hash-table :test 'equal) :accessor names))
   (:documentation "Base pipeline object that is necessary to orchestrate piping systems."))
 
+(define-condition unknown-name-error ()
+  ((%name :initarg :name :reader name)
+   (%pipeline :initarg :pipeline :reader pipeline))
+  (:documentation "Signalled if a name which was not previously set in the pipeline is looked up")
+  (:report (lambda (c stream)
+             (format stream "Name ~A is not known in pipeline ~A" (name c) (pipeline c)))))
+
+(defgeneric resolve-place (pipeline place &key ignore-unknown)
+  (:documentation "Resolve PLACE to a path (ie. list of integers). If PLACE is already a
+  path, return it unchanged. If it's a name (as set by SET-NAME), return its corresponding
+  path. If the name is not known, signal UNKNOWN-NAME-ERROR, unless IGNORE-UNKNOWN is
+  non-nil, in which case NIL is returned.
+
+  Returns a secondary value which is T if the place was successfully resolved, and NIL if
+  it was an unknown name and INGORE-UNKNOWN was specified.")
+  (:method ((pipeline pipeline) (place list) &key &allow-other-keys)
+    (values place t))
+  ;; NIL is a valid path with no segments, pointing to the entire pipeline
+  (:method ((pipeline pipeline) (place null) &key &allow-other-keys)
+    (values place t))
+  (:method ((pipeline pipeline) (place symbol) &key ignore-unknown)
+    (multiple-value-bind (path found)
+        (gethash place (names pipeline))
+      (cond
+        (found (values path found))
+        (ignore-unknown (values nil nil))
+        (t (error 'unknown-name-error :name place :pipeline pipeline))))))
+
 (defgeneric find-place (segment place)
   (:documentation "Searches and returns the segment as designated by PLACE.
-A place is a list of signed integers, each denoting the position of the item
-within the current splitter or segment. Subsequent numbers descend into the
-item matched by the previous number.
+A place can be a path (a list of signed integers), each denoting the position of the item
+within the current splitter or segment. Subsequent numbers descend into the item matched
+by the previous number.
 
 As such, (1 4) matches the following:
  ([] () [] [])
       \- ([] [] [] [] [] [])
-                      ^^")
+                      ^^
+
+A place can also be a name denoting a path within a pipeline, set by SET-NAME. In this
+case, the name is looked up first, and resolved to a path by RESOLVE-PLACE. If the name
+given was not previously set in PIPELINE, UNKNOWN-NAME-ERROR is signalled.")
   (:method ((segment segment) place)
     (if place
         (error "Cannot descend into segment!")
         segment))
   (:method ((array array) (place list))
-    (if place
-        (find-place (aref array (pop place)) place)
-        array))
+    (labels ((find-it (array path)
+               (if place
+                   (find-it (aref array (pop place)) place)
+                   array)))
+      (values (find-it array place) place)))
   (:method ((pipeline pipeline) (place list))
     (find-place (pipeline pipeline) place))
-  ;; Special-case for NIL, which according to CLOS is apparently a symbol, rather than a list
-  (:method ((pipeline pipeline) (place null))
-    (pipeline pipeline))
-  (:method ((pipeline pipeline) (name symbol))
-    (multiple-value-bind (path found)
-        (gethash name (names pipeline))
-      (when found
-        (find-place (pipeline pipeline) path)))))
+  (:method :around (pipeline (name symbol))
+    (call-next-method pipeline (resolve-place name))))
 
 (defgeneric find-parent (segment place)
   (:documentation "Same as FIND-PLACE, except it returns the parent of the matched item.
