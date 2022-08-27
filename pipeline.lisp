@@ -1,4 +1,4 @@
-#| 
+#|
  This file is a part of Piping
  (c) 2014 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
  Author: Nicolas Hafner <shinmera@tymoon.eu>
@@ -22,26 +22,26 @@
   (:report (lambda (c stream)
              (format stream "Name ~A is not known in pipeline ~A" (name c) (pipeline c)))))
 
-(defgeneric resolve-place (pipeline place &key ignore-unknown)
-  (:documentation "Resolve PLACE to a path (ie. list of integers). If PLACE is already a
-  path, return it unchanged. If it's a name (as set by SET-NAME), return its corresponding
-  path. If the name is not known, signal UNKNOWN-NAME-ERROR, unless IGNORE-UNKNOWN is
-  non-nil, in which case NIL is returned.
+(defgeneric resolve-place (pipeline place &key if-does-not-exist)
+  (:documentation "Resolve PLACE to a path (ie. list of integers).
+
+  If PLACE is already a path, return it unchanged. If it's a name (as set by SET-NAME),
+  return its corresponding path. IF-DOES-NOT-EXIST determines handling of unknown names:
+  if it's :ERROR, signal UNKNOWN-NAME-ERROR; if it's NIL, NIL is silently returned.
 
   Returns a secondary value which is T if the place was successfully resolved, and NIL if
-  it was an unknown name and INGORE-UNKNOWN was specified.")
+  it was an unknown name and IF-DOES-NOT-EXIST is NIL.")
   (:method ((pipeline pipeline) (place list) &key &allow-other-keys)
-    (values place t))
+    (values place T))
   ;; NIL is a valid path with no segments, pointing to the entire pipeline
   (:method ((pipeline pipeline) (place null) &key &allow-other-keys)
-    (values place t))
-  (:method ((pipeline pipeline) (place symbol) &key ignore-unknown)
-    (multiple-value-bind (path found)
-        (gethash place (names pipeline))
-      (cond
-        (found (values path found))
-        (ignore-unknown (values nil nil))
-        (t (error 'unknown-name-error :name place :pipeline pipeline))))))
+    (values place T))
+  (:method ((pipeline pipeline) (place symbol) &key (if-does-not-exist :error))
+    (or (gethash place (names pipeline))
+        (ecase if-does-not-exist
+          (:error (restart-case (error 'unknown-name-error :name place :pipeline pipeline)
+                    (use-value (value) value)))
+          ((NIL) (values NIL NIL))))))
 
 (defgeneric find-place (segment place)
   (:documentation "Searches and returns the segment as designated by PLACE.
@@ -69,8 +69,10 @@ given was not previously set in PIPELINE, UNKNOWN-NAME-ERROR is signalled.")
       (values (find-it array place) place)))
   (:method ((pipeline pipeline) (place list))
     (find-place (pipeline pipeline) place))
-  (:method :around (pipeline (name symbol))
-    (call-next-method pipeline (resolve-place name))))
+  (:method ((pipeline pipeline) (name symbol))
+    (if name
+        (find-place pipeline (resolve-place pipeline name))
+        (call-next-method))))
 
 (defgeneric find-parent (segment place)
   (:documentation "Same as FIND-PLACE, except it returns the parent of the matched item.
@@ -85,12 +87,14 @@ As secondary value it returns the position of the matched item within the parent
   (:method ((pipeline pipeline) (place list))
     (find-parent (pipeline pipeline) place))
   (:method ((pipeline pipeline) (name symbol))
-    (find-parent (pipeline pipeline) (gethash name (names pipeline)))))
+    (if name
+        (find-parent pipeline (resolve-place pipeline name))
+        (call-next-method))))
 
 (defgeneric insert (segment place &optional position)
   (:documentation "Appends the item to the given place unless a specific position is given.
 If position is set, the item is expected to be inserted at the specified position, without
-replacing or disturbing any other items. 
+replacing or disturbing any other items.
 
 Returns the segment.
 
@@ -105,7 +109,7 @@ segments. You should always use add-segment or insert-segment instead if possibl
 (defgeneric withdraw (place &optional position)
   (:documentation "Removes an item from the place, by default from the end unless position is set.
 If position is given, it is expected that the specified item is removed without disturbing any
-other items and without leaving any empty spaces within the parent. 
+other items and without leaving any empty spaces within the parent.
 
 Returns the segment.
 
@@ -120,18 +124,24 @@ segments. You should always use remove-segment instead if possible.")
   (:documentation "Add a new segment to the pipeline.
 If place is set, the pipe is added to the specified place as per INSERT.
 The place specified is expected to be a splitter or similar to append
-the pipe to. Returns the segment.")
+the pipe to. Returns the segment. PLACE can be a name, as in FIND-PLACE.")
   (:method ((pipeline pipeline) (segment segment) &optional place)
     (insert segment (find-place pipeline place)))
   (:method ((pipeline pipeline) (array array) &optional place)
     (insert array (find-place pipeline place)))
   (:method ((pipeline pipeline) (array (eql :pipe)) &optional place)
-    (insert (make-pipe) (find-place pipeline place))))
+    (insert (make-pipe) (find-place pipeline place)))
+  (:method ((pipeline pipeline) segment &optional place)
+    (add-segment pipeline segment
+                 (if (and place (symbolp place)
+                          (resolve-place pipeline place))
+                     place))))
 
 (defgeneric remove-segment (pipeline place)
   (:documentation "Removes the given segment (as well as its children, if any).
 This also removes any names that either match or go through the specified place
-and adapts names that would be affected by a place shift. 
+and adapts names that would be affected by a place shift. PLACE can be a name, as in
+FIND-PLACE.
 
 Returns the segment.")
   (:method ((pipeline pipeline) place)
@@ -148,12 +158,17 @@ Returns the segment.")
             when (and (<= (length parent) (length v))
                       (every #'= parent v)
                       (< pos (nth (length parent) v)))
-              do (decf (nth (length parent) v))))))
+              do (decf (nth (length parent) v)))))
+  (:method ((pipeline pipeline) (place symbol))
+    (if place
+        (remove-segment pipeline (resolve-place pipeline place))
+        (call-next-method))))
 
 (defgeneric insert-segment (pipeline segment place)
   (:documentation "Insert the segment at the given place.
 Note that the segment is always inserted into the parent as specified by the place
-and found by FIND-PARENT and inserted into the position as per INSERT. 
+and found by FIND-PARENT and inserted into the position as per INSERT. PLACE can be a
+name, as in FIND-PLACE.
 
 Returns the segment.")
   (:method ((pipeline pipeline) (segment segment) place)
@@ -181,11 +196,16 @@ Returns the segment.")
                       (<= pos (nth (length parent) v)))
               do (incf (nth (length parent) v)))))
   (:method ((pipeline pipeline) (array (eql :pipe)) place)
-    (insert-segment pipeline (make-pipe) place)))
+    (insert-segment pipeline (make-pipe) place))
+  (:method ((pipeline pipeline) segment (place symbol))
+    (if place
+        (insert-segment pipeline segment (resolve-place pipeline place))
+        (call-next-method))))
 
 (defgeneric replace-segment (pipeline place pipe)
   (:documentation "Replace a place with a pipe.
-This happens simply through REMOVE-PLACE and INSERT-PIPE.
+This happens simply through REMOVE-PLACE and INSERT-PIPE. PLACE can be a name, as in
+FIND-PLACE.
 
 Note that this will destroy names due to REMOVE-PLACE.
 
@@ -197,12 +217,16 @@ Returns the segment.")
     (remove-segment pipeline place)
     (insert-segment pipeline array place))
   (:method ((pipeline pipeline) place (array (eql :pipe)))
-    (replace-segment pipeline place (make-pipe))))
+    (replace-segment pipeline place (make-pipe)))
+  (:method ((pipeline pipeline) (place symbol) pipe)
+    (if place
+        (replace-segment pipeline (resolve-place pipeline place) pipe)
+        (call-next-method))))
 
 (defgeneric move-segment (pipeline place new-place)
   (:documentation "Moves a segment to another while preserving names.
 This attempts to fix names associated with the place or deeper places
-by changing their place as well.
+by changing their place as well. Either place can be a name, as in FIND-PLACE.
 
 Returns the segment.")
   (:method ((pipeline pipeline) place new-place)
@@ -213,7 +237,15 @@ Returns the segment.")
             for v being the hash-values of (names pipeline)
             when (and (<= (length place) (length v))
                       (every #'= place v))
-              do (set-name pipeline (append place (subseq v (length place))) k)))))
+              do (set-name pipeline (append place (subseq v (length place))) k))))
+  (:method ((pipeline pipeline) (place symbol) new-place)
+    (if place
+        (move-segment pipeline (resolve-place pipeline place) new-place)
+        (call-next-method)))
+  (:method ((pipeline pipeline) place (new-place symbol))
+    (if new-place
+        (move-segment pipeline place (resolve-place pipeline new-place))
+        (call-next-method))))
 
 (defgeneric set-name (pipeline place name)
   (:documentation "Associates a place with a name so it can be accessed more easily.
