@@ -25,10 +25,12 @@
    #:faucet)
   ;; pipeline.lisp
   (:export
+   #:unknown-name-error
    #:make-pipe
    #:pipeline
    #:pipeline
    #:names
+   #:resolve-place
    #:find-place
    #:find-parent
    #:insert
