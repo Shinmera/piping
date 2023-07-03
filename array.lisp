@@ -1,9 +1,3 @@
-#|
- This file is a part of Piping
- (c) 2014 Shirakumo http://tymoon.eu (shinmera@tymoon.eu)
- Author: Nicolas Hafner <shinmera@tymoon.eu>
-|#
-
 (in-package #:org.tymoonnext.piping)
 
 (defun array-shift (array &key (n 1) (from 0) (to (length array)) (adjust T) (fill NIL f-p))
